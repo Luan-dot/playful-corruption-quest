@@ -3,10 +3,44 @@ import { useState } from "react";
 import GameContainer from "@/components/game/GameContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertTriangle, BookOpen, Brain, CheckCircle2, Shield } from "lucide-react";
+import { 
+  AlertTriangle, 
+  BookOpen, 
+  Brain, 
+  CheckCircle2, 
+  Shield, 
+  Globe, 
+  Users, 
+  FileText, 
+  Layers, 
+  Network, 
+  Lightbulb, 
+  GraduationCap 
+} from 'lucide-react';
+import DifficultySelector from "@/components/game/DifficultySelector";
+import ResourceLibrary from "@/components/game/ResourceLibrary";
 
 const Index = () => {
   const [gameStarted, setGameStarted] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [difficulty, setDifficulty] = useState("intermediate");
+
+  if (showLibrary) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-12">
+        <div className="container max-w-5xl mx-auto px-4">
+          <div className="mb-6 flex justify-between items-center">
+            <h1 className="text-3xl font-bold text-corruption-primary">Resource Library</h1>
+            <Button variant="outline" onClick={() => setShowLibrary(false)}>
+              Return to Game
+            </Button>
+          </div>
+          
+          <ResourceLibrary />
+        </div>
+      </div>
+    );
+  }
 
   if (!gameStarted) {
     return (
@@ -15,7 +49,7 @@ const Index = () => {
           <div className="text-center mb-8">
             <h1 className="text-5xl font-bold mb-4 text-corruption-primary">Corruption Conundrum</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              An educational journey through ethical dilemmas and the complexity of corruption
+              An immersive educational journey through ethical dilemmas and the complexity of corruption
             </p>
           </div>
 
@@ -32,7 +66,7 @@ const Index = () => {
               </p>
             </div>
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="space-y-4">
                   <div className="flex gap-3 items-start">
                     <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
@@ -53,10 +87,28 @@ const Index = () => {
                 
                 <div className="space-y-4">
                   <div className="flex gap-3 items-start">
-                    <BookOpen className="h-5 w-5 text-corruption-primary mt-0.5" />
+                    <Network className="h-5 w-5 text-corruption-primary mt-0.5" />
                     <div>
-                      <h3 className="font-medium">Learning Experience</h3>
-                      <p className="text-sm text-muted-foreground">Discover the systemic nature of corruption and the importance of ethical leadership.</p>
+                      <h3 className="font-medium">Branching Narratives</h3>
+                      <p className="text-sm text-muted-foreground">Your early decisions affect later scenarios, creating a personalized corruption education experience.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-3 items-start">
+                    <Globe className="h-5 w-5 text-blue-500 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium">Global Perspectives</h3>
+                      <p className="text-sm text-muted-foreground">Explore corruption mechanisms across different cultural and economic contexts.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="flex gap-3 items-start">
+                    <Lightbulb className="h-5 w-5 text-yellow-500 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium">Interactive Learning</h3>
+                      <p className="text-sm text-muted-foreground">Engage with mini-games, corruption vulnerability assessments, and simulation activities.</p>
                     </div>
                   </div>
                   
@@ -70,9 +122,43 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="mt-8 text-center">
+              <div className="p-4 border border-muted rounded-md bg-muted/10 mb-6">
+                <h3 className="font-medium mb-2 flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-corruption-primary" />
+                  <span>New Features</span>
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="p-2 bg-background rounded text-center text-sm">
+                    <Users className="h-4 w-4 mx-auto mb-1 text-corruption-secondary" />
+                    <span>Social Comparison</span>
+                  </div>
+                  <div className="p-2 bg-background rounded text-center text-sm">
+                    <Brain className="h-4 w-4 mx-auto mb-1 text-corruption-secondary" />
+                    <span>Reflection Prompts</span>
+                  </div>
+                  <div className="p-2 bg-background rounded text-center text-sm">
+                    <FileText className="h-4 w-4 mx-auto mb-1 text-corruption-secondary" />
+                    <span>Real-World News</span>
+                  </div>
+                  <div className="p-2 bg-background rounded text-center text-sm">
+                    <Layers className="h-4 w-4 mx-auto mb-1 text-corruption-secondary" />
+                    <span>Difficulty Levels</span>
+                  </div>
+                </div>
+              </div>
+              
+              <DifficultySelector 
+                selectedDifficulty={difficulty} 
+                onSelect={setDifficulty} 
+              />
+              
+              <div className="flex flex-col md:flex-row justify-center gap-4">
                 <Button size="lg" onClick={() => setGameStarted(true)} className="px-8">
                   Begin Your Journey
+                </Button>
+                <Button variant="outline" size="lg" onClick={() => setShowLibrary(true)} className="gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  <span>Explore Resource Library</span>
                 </Button>
               </div>
             </CardContent>
@@ -92,7 +178,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 pb-12">
-      <GameContainer />
+      <GameContainer difficulty={difficulty} onOpenLibrary={() => setShowLibrary(true)} />
     </div>
   );
 };
