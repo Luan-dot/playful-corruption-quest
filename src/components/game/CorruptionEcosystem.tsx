@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tab } from "@/components/ui/tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Network, 
@@ -42,14 +40,12 @@ const CorruptionEcosystem: React.FC<CorruptionEcosystemProps> = ({ onComplete })
       [entityId]: !prev[entityId]
     }));
     
-    // Check if all entities are revealed
     const updatedEntities = {
       ...revealedEntities,
       [entityId]: !revealedEntities[entityId]
     };
     
     if (Object.values(updatedEntities).every(value => value)) {
-      // If all entities revealed, show a success message or unlock something
       console.log("All entities revealed!");
     }
   };

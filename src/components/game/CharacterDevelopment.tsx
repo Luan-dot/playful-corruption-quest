@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { CircleUser, Award, Milestone, TrendingUp, Pulse } from 'lucide-react';
+import { CircleUser, Award, Milestone, TrendingUp, Pause } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 
@@ -16,7 +15,6 @@ const CharacterDevelopment: React.FC<CharacterDevelopmentProps> = ({
   reputation,
   completedScenarios
 }) => {
-  // Calculate character traits based on player stats
   const determineCharacterTitle = () => {
     if (integrity >= 80) return "Ethical Exemplar";
     if (integrity >= 60) return "Principled Professional";
@@ -28,29 +26,25 @@ const CharacterDevelopment: React.FC<CharacterDevelopmentProps> = ({
   const determineCharacterTraits = () => {
     const traits = [];
     
-    // Integrity-based traits
     if (integrity >= 75) traits.push("Principled Decision-Maker");
     if (integrity >= 60) traits.push("Transparent Communicator");
     if (integrity <= 30) traits.push("Ethical Flexibility");
     if (integrity <= 20) traits.push("Self-Interest Focus");
     
-    // Reputation-based traits
     if (reputation >= 70) traits.push("Respected Leader");
     if (reputation >= 60) traits.push("Trusted Colleague");
     if (reputation <= 30) traits.push("Questionable Reputation");
     
-    // Ensure we have at least 2 traits
     while (traits.length < 2) {
       traits.push("Developing Professional");
     }
     
-    return traits.slice(0, 3); // Return max 3 traits
+    return traits.slice(0, 3);
   };
   
   const title = determineCharacterTitle();
   const traits = determineCharacterTraits();
   
-  // Character development milestones (would be more sophisticated in real implementation)
   const milestones = [
     { 
       completed: completedScenarios >= 1, 
@@ -130,7 +124,7 @@ const CharacterDevelopment: React.FC<CharacterDevelopmentProps> = ({
                 {milestone.completed ? (
                   <Award className="h-4 w-4 text-yellow-500" />
                 ) : (
-                  <Pulse className="h-4 w-4 text-muted-foreground" />
+                  <Pause className="h-4 w-4 text-muted-foreground" />
                 )}
                 <span className={milestone.completed ? "" : "text-muted-foreground"}>
                   {milestone.name}
