@@ -221,6 +221,15 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
   const renderSpecialActivity = () => {
     switch(gameState) {
       case 'reflection':
+        // Fix: Add a null check for currentScenario and make sure it's valid before accessing
+        if (currentScenario <= 0 || !scenarios[currentScenario - 1]) {
+          return (
+            <div className="container mx-auto px-4 py-6 max-w-3xl">
+              <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Error: Scenario not found</h2>
+              <Button onClick={handleActivityComplete}>Continue</Button>
+            </div>
+          );
+        }
         return (
           <div className="container mx-auto px-4 py-6 max-w-3xl">
             <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Reflection Moment</h2>
