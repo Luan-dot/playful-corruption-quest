@@ -3,7 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Scenario } from '@/data/scenarios';
-import { PenLine, ArrowRight, Users, Clock } from 'lucide-react';
+import { PenLine, ArrowRight, Users, Clock, Building, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface ScenarioCardProps {
   scenario: Scenario;
@@ -27,11 +28,19 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
     return "from-gray-500 to-blue-500";
   };
 
+  // Function to determine the icon for ethical rating
+  const getEthicalIcon = (integrityImpact: number) => {
+    if (integrityImpact > 10) return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+    if (integrityImpact > 0) return <CheckCircle2 className="h-4 w-4 text-blue-500" />;
+    if (integrityImpact > -10) return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+    return <XCircle className="h-4 w-4 text-red-500" />;
+  };
+
   return (
     <div className="p-6">
       <div className="mb-6">
         <h3 className="text-2xl font-bold mb-2">{title}</h3>
-        <div className="flex gap-4 mb-4 text-sm text-muted-foreground">
+        <div className="flex flex-wrap gap-4 mb-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
             <span>{setting.position}</span>
@@ -40,13 +49,25 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
             <Clock className="h-4 w-4" />
             <span>{setting.year}</span>
           </div>
+          <div className="flex items-center gap-1">
+            <Building className="h-4 w-4" />
+            <span>{setting.location}</span>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="md:col-span-2">
             <p className="text-muted-foreground mb-4">{description}</p>
-            <p className="italic text-sm border-l-2 border-primary pl-3 py-1 bg-primary/5">
+            <div className="italic text-sm border-l-2 border-primary pl-3 py-1 bg-primary/5">
               "{setting.context}"
-            </p>
+            </div>
+            
+            <div className="mt-4 flex flex-wrap gap-2">
+              {scenario.stakeholders.map((stakeholder, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {stakeholder}
+                </Badge>
+              ))}
+            </div>
           </div>
           {image && (
             <div className="hidden md:block">
@@ -74,7 +95,15 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
               onClick={() => onChoice(choice.id)}
             >
               <CardContent className="p-4">
-                <p>{choice.text}</p>
+                <div className="flex items-start gap-3">
+                  <div className="mt-1">
+                    {getEthicalIcon(choice.outcomes.integrity || 0)}
+                  </div>
+                  <div>
+                    <p>{choice.text}</p>
+                    <p className="text-xs text-muted-foreground mt-2 italic">{choice.reasoning}</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -87,6 +116,11 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
               <p className="text-muted-foreground">
                 You've made your decision. The consequences of your actions will follow you.
               </p>
+              
+              <div className="mt-4 p-3 bg-primary/5 rounded-md text-sm">
+                <p className="font-medium mb-1">Reflection:</p>
+                <p>Consider how your choice might affect different stakeholders. What potential long-term consequences might arise from this decision?</p>
+              </div>
             </CardContent>
           </Card>
           

@@ -18,8 +18,15 @@ import {
 } from 'lucide-react';
 import ScenarioCard from './ScenarioCard';
 import ResultsScreen from './ResultsScreen';
+import EducationalSidebar from './EducationalSidebar';
 import { scenarios } from '@/data/scenarios';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type PlayerStats = {
   integrity: number;
@@ -49,6 +56,7 @@ const GameContainer = () => {
   const [showingSummary, setShowingSummary] = useState(false);
   const [activeTab, setActiveTab] = useState("scenario");
   const [isGameComplete, setIsGameComplete] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const handleChoice = (choiceId: number) => {
     const scenario = scenarios[currentScenario];
@@ -91,6 +99,7 @@ const GameContainer = () => {
       setCurrentScenario(prev => prev + 1);
       setShowingSummary(false);
       setActiveTab("scenario");
+      setShowHint(false);
     } else {
       // Game completed
       setIsGameComplete(true);
@@ -111,6 +120,10 @@ const GameContainer = () => {
     if (playerStats.integrity >= 50) return "text-yellow-500";
     if (playerStats.integrity >= 30) return "text-orange-500";
     return "text-corruption-red";
+  };
+
+  const toggleHint = () => {
+    setShowHint(!showHint);
   };
 
   if (isGameComplete) {
@@ -186,9 +199,21 @@ const GameContainer = () => {
                 <span>{playerStats.completedScenarios}/{scenarios.length} Cases</span>
               </Badge>
               
-              <HelpCircle className="h-5 w-5 text-muted-foreground cursor-help" 
-                title="Higher integrity means less corruption. Your choices affect all your stats." />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-5 w-5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">Higher integrity means less corruption. Your choices affect all your stats.</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
+
+            {!isGameComplete && (
+              <div className="mt-6">
+                <EducationalSidebar scenario={scenarios[currentScenario]} showHint={showHint} toggleHint={toggleHint} />
+              </div>
+            )}
           </Card>
         </div>
         
@@ -243,6 +268,14 @@ const GameContainer = () => {
                         <span>Why This Matters</span>
                       </h4>
                       <p className="text-sm text-muted-foreground">{scenarios[currentScenario].lesson}</p>
+                    </div>
+
+                    <div className="p-4 border border-muted rounded-md mt-4 bg-primary/5">
+                      <h4 className="font-semibold flex items-center gap-2 mb-2">
+                        <Info className="h-4 w-4 text-corruption-primary" />
+                        <span>Real-World Example</span>
+                      </h4>
+                      <p className="text-sm text-muted-foreground">{scenarios[currentScenario].realWorldExample}</p>
                     </div>
                   </div>
                 </div>
