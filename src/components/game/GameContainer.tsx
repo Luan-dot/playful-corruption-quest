@@ -202,10 +202,10 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
 
   // Get color classes based on corruption level
   const getCorruptionColorClass = () => {
-    if (playerStats.integrity >= 80) return "text-green-600";
-    if (playerStats.integrity >= 50) return "text-yellow-500";
-    if (playerStats.integrity >= 30) return "text-orange-500";
-    return "text-corruption-red";
+    if (playerStats.integrity >= 80) return "text-black";
+    if (playerStats.integrity >= 50) return "text-black";
+    if (playerStats.integrity >= 30) return "text-black font-medium";
+    return "text-black font-bold";
   };
 
   const toggleHint = () => {
@@ -225,14 +225,14 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
         if (currentScenario <= 0 || !scenarios[currentScenario - 1]) {
           return (
             <div className="container mx-auto px-4 py-6 max-w-3xl">
-              <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Error: Scenario not found</h2>
-              <Button onClick={handleActivityComplete}>Continue</Button>
+              <h2 className="text-2xl font-bold mb-6 text-center">Error: Scenario not found</h2>
+              <Button variant="minimal" onClick={handleActivityComplete}>Continue</Button>
             </div>
           );
         }
         return (
           <div className="container mx-auto px-4 py-6 max-w-3xl">
-            <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Reflection Moment</h2>
+            <h2 className="text-2xl font-serif mb-6 text-center">Reflection Moment</h2>
             <ReflectionPrompt 
               scenarioId={scenarios[currentScenario - 1].id} 
               onComplete={handleActivityComplete} 
@@ -243,7 +243,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
       case 'investigation':
         return (
           <div className="container mx-auto px-4 py-6 max-w-4xl">
-            <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Corruption Investigation Challenge</h2>
+            <h2 className="text-2xl font-serif mb-6 text-center">Corruption Investigation Challenge</h2>
             <InvestigationMiniGame 
               onComplete={(score) => {
                 toast({
@@ -260,7 +260,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
       case 'ecosystem':
         return (
           <div className="container mx-auto px-4 py-6 max-w-4xl">
-            <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Understanding Corruption Ecosystems</h2>
+            <h2 className="text-2xl font-serif mb-6 text-center">Understanding Corruption Ecosystems</h2>
             <CorruptionEcosystem onComplete={handleActivityComplete} />
           </div>
         );
@@ -268,7 +268,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
       case 'branching-narrative':
         return (
           <div className="container mx-auto px-4 py-6 max-w-3xl">
-            <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Corruption Dialogue Simulation</h2>
+            <h2 className="text-2xl font-serif mb-6 text-center">Corruption Dialogue Simulation</h2>
             <BranchingNarrative 
               onComplete={(stats) => {
                 toast({
@@ -285,7 +285,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
       case 'vulnerability-assessment':
         return (
           <div className="container mx-auto px-4 py-6 max-w-3xl">
-            <h2 className="text-2xl font-bold mb-6 text-center text-corruption-primary">Personal Integrity Assessment</h2>
+            <h2 className="text-2xl font-serif mb-6 text-center">Personal Integrity Assessment</h2>
             <VulnerabilityAssessment onComplete={handleActivityComplete} />
           </div>
         );
@@ -309,19 +309,19 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl animate-fade-in">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold mb-2 text-corruption-primary">Corruption Conundrum</h1>
-        <p className="text-lg text-muted-foreground">
-          Navigate the murky waters of corruption and integrity
+        <h1 className="text-4xl font-serif mb-2">Political Integrity</h1>
+        <p className="text-lg text-muted-foreground font-serif">
+          A game about leadership, ethics, and human nature
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Stats panel */}
         <div className="md:col-span-1">
-          <Card className="p-4 shadow-md">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Card className="p-4 shadow-sm rounded-none border">
+            <h2 className="text-xl font-serif mb-4 flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
-              <span>Your Status</span>
+              <span>Status</span>
             </h2>
             
             <div className="space-y-4 mb-6">
@@ -330,11 +330,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
                   <span className="text-sm font-medium">Integrity</span>
                   <span className="text-sm font-medium">{playerStats.integrity}%</span>
                 </div>
-                <Progress value={playerStats.integrity} className="h-2" 
-                  style={{
-                    background: `linear-gradient(to right, #EA384C, #FFA500, #E5DEFF)`,
-                  }}
-                />
+                <Progress value={playerStats.integrity} className="minimal-progress" />
               </div>
               
               <div>
@@ -342,7 +338,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
                   <span className="text-sm font-medium">Money</span>
                   <span className="text-sm font-medium">{playerStats.money}%</span>
                 </div>
-                <Progress value={playerStats.money} className="h-2" />
+                <Progress value={playerStats.money} className="minimal-progress" />
               </div>
               
               <div>
@@ -350,7 +346,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
                   <span className="text-sm font-medium">Power</span>
                   <span className="text-sm font-medium">{playerStats.power}%</span>
                 </div>
-                <Progress value={playerStats.power} className="h-2" />
+                <Progress value={playerStats.power} className="minimal-progress" />
               </div>
               
               <div>
@@ -358,19 +354,19 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
                   <span className="text-sm font-medium">Reputation</span>
                   <span className="text-sm font-medium">{playerStats.reputation}%</span>
                 </div>
-                <Progress value={playerStats.reputation} className="h-2" />
+                <Progress value={playerStats.reputation} className="minimal-progress" />
               </div>
             </div>
             
-            <div className="p-3 rounded-md bg-muted mb-4">
+            <div className="p-3 border border-black mb-4">
               <p className="text-sm flex gap-2 items-center">
                 <AlertTriangle className="h-4 w-4" />
-                <span>Corruption Level: <span className={getCorruptionColorClass() + " font-bold"}>{getCorruptionLevel()}</span></span>
+                <span>Corruption Level: <span className={getCorruptionColorClass()}>{getCorruptionLevel()}</span></span>
               </p>
             </div>
             
             <div className="flex justify-between items-center mb-4">
-              <Badge variant="outline" className="flex gap-1 items-center">
+              <Badge variant="outline" className="flex gap-1 items-center minimal-badge">
                 <CheckCircle2 className="h-3 w-3" />
                 <span>{playerStats.completedScenarios}/{scenarios.length} Cases</span>
               </Badge>
@@ -387,7 +383,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
             
             {onOpenLibrary && (
               <Button 
-                variant="outline" 
+                variant="minimal" 
                 onClick={onOpenLibrary} 
                 className="w-full mb-6 gap-2"
               >
@@ -412,9 +408,9 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
         
         {/* Main game content */}
         <div className="md:col-span-2">
-          <Card className="shadow-md overflow-hidden">
+          <Card className="shadow-sm overflow-hidden rounded-none border">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <div className="bg-muted p-1 flex justify-between items-center">
+              <div className="bg-muted p-1 flex justify-between items-center border-b">
                 <TabsList className="bg-transparent">
                   <TabsTrigger value="scenario" className="data-[state=active]:bg-background">
                     <div className="flex items-center gap-1">
@@ -437,7 +433,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
                 </TabsList>
                 
                 <div className="pr-4">
-                  <Badge variant="outline" className="bg-primary/10">
+                  <Badge variant="outline" className="minimal-badge">
                     Case {currentScenario + 1} of {scenarios.length}
                   </Badge>
                 </div>
@@ -462,34 +458,34 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
                 )}
               </TabsContent>
               
-              <TabsContent value="context" className="p-6 m-0 min-h-[400px] bg-muted/20">
-                <div className="paper-bg p-6 rounded-md">
-                  <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-                    <Building className="h-5 w-5 text-corruption-primary" />
+              <TabsContent value="context" className="p-6 m-0 min-h-[400px]">
+                <div className="p-6 border">
+                  <h3 className="text-xl font-serif mb-3 flex items-center gap-2">
+                    <Building className="h-5 w-5" />
                     <span>Educational Context</span>
                   </h3>
                   <div className="prose max-w-none">
                     <p className="mb-3">{scenarios[currentScenario].context}</p>
                     
-                    <div className="p-4 border border-muted rounded-md mt-4 bg-white/50">
-                      <h4 className="font-semibold flex items-center gap-2 mb-2">
-                        <Award className="h-4 w-4 text-corruption-secondary" />
+                    <div className="p-4 border mt-4">
+                      <h4 className="font-medium flex items-center gap-2 mb-2">
+                        <Award className="h-4 w-4" />
                         <span>Why This Matters</span>
                       </h4>
                       <p className="text-sm text-muted-foreground">{scenarios[currentScenario].lesson}</p>
                     </div>
 
-                    <div className="p-4 border border-muted rounded-md mt-4 bg-primary/5">
-                      <h4 className="font-semibold flex items-center gap-2 mb-2">
-                        <Info className="h-4 w-4 text-corruption-primary" />
+                    <div className="p-4 border mt-4">
+                      <h4 className="font-medium flex items-center gap-2 mb-2">
+                        <Info className="h-4 w-4" />
                         <span>Real-World Example</span>
                       </h4>
                       <p className="text-sm text-muted-foreground">{scenarios[currentScenario].realWorldExample}</p>
                     </div>
                     
-                    <div className="p-4 border border-muted rounded-md mt-4 bg-yellow-50">
-                      <h4 className="font-semibold flex items-center gap-2 mb-2">
-                        <Network className="h-4 w-4 text-yellow-600" />
+                    <div className="p-4 border border-black mt-4">
+                      <h4 className="font-medium flex items-center gap-2 mb-2">
+                        <Network className="h-4 w-4" />
                         <span>Corruption Ecosystem Analysis</span>
                       </h4>
                       <p className="text-sm text-muted-foreground">
@@ -502,24 +498,24 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
                 </div>
               </TabsContent>
               
-              <TabsContent value="news" className="p-6 m-0 min-h-[400px] bg-muted/20">
+              <TabsContent value="news" className="p-6 m-0 min-h-[400px]">
                 {getRelevantNews() ? (
-                  <div className="paper-bg p-6 rounded-md">
+                  <div className="p-6 border">
                     <div className="border-b pb-3 mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">Breaking News</Badge>
+                        <Badge variant="outline" className="minimal-badge">Breaking News</Badge>
                         <span className="text-sm text-muted-foreground">{getRelevantNews()?.date}</span>
                       </div>
-                      <h3 className="text-xl font-bold mb-1">{getRelevantNews()?.title}</h3>
+                      <h3 className="text-xl font-serif mb-1">{getRelevantNews()?.title}</h3>
                       <p className="text-sm text-muted-foreground">Source: {getRelevantNews()?.source}</p>
                     </div>
                     
                     <div className="prose max-w-none">
                       <p className="mb-4 text-lg">{getRelevantNews()?.summary}</p>
                       
-                      <div className="p-4 bg-muted/20 rounded-md">
-                        <h4 className="font-semibold flex items-center gap-2 mb-2">
-                          <Lightbulb className="h-4 w-4 text-yellow-500" />
+                      <div className="p-4 border">
+                        <h4 className="font-medium flex items-center gap-2 mb-2">
+                          <Lightbulb className="h-4 w-4" />
                           <span>How This Relates To Your Scenario</span>
                         </h4>
                         <p className="text-sm">

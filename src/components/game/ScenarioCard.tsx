@@ -21,25 +21,18 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
 }) => {
   const { title, description, setting, choices, image } = scenario;
 
-  // Function to determine the gradient colors for each choice
-  const getChoiceGradient = (integrityImpact: number) => {
-    if (integrityImpact > 0) return "from-green-500 to-blue-500";
-    if (integrityImpact < 0) return "from-red-500 to-orange-500";
-    return "from-gray-500 to-blue-500";
-  };
-
   // Function to determine the icon for ethical rating
   const getEthicalIcon = (integrityImpact: number) => {
-    if (integrityImpact > 10) return <CheckCircle2 className="h-4 w-4 text-green-500" />;
-    if (integrityImpact > 0) return <CheckCircle2 className="h-4 w-4 text-blue-500" />;
-    if (integrityImpact > -10) return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-    return <XCircle className="h-4 w-4 text-red-500" />;
+    if (integrityImpact > 10) return <CheckCircle2 className="h-4 w-4" />;
+    if (integrityImpact > 0) return <CheckCircle2 className="h-4 w-4" />;
+    if (integrityImpact > -10) return <AlertTriangle className="h-4 w-4" />;
+    return <XCircle className="h-4 w-4" />;
   };
 
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold mb-2">{title}</h3>
+        <h3 className="text-2xl font-serif mb-2">{title}</h3>
         <div className="flex flex-wrap gap-4 mb-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
@@ -57,13 +50,13 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="md:col-span-2">
             <p className="text-muted-foreground mb-4">{description}</p>
-            <div className="italic text-sm border-l-2 border-primary pl-3 py-1 bg-primary/5">
+            <div className="italic text-sm border-l-2 border-black pl-3 py-1">
               "{setting.context}"
             </div>
             
             <div className="mt-4 flex flex-wrap gap-2">
               {scenario.stakeholders.map((stakeholder, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
+                <Badge key={index} variant="outline" className="minimal-badge">
                   {stakeholder}
                 </Badge>
               ))}
@@ -71,7 +64,7 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
           </div>
           {image && (
             <div className="hidden md:block">
-              <div className="w-full h-36 rounded-md overflow-hidden bg-muted">
+              <div className="w-full h-36 rounded-none overflow-hidden border bg-muted">
                 <div className="h-full w-full flex items-center justify-center text-muted-foreground">
                   [Scenario Image]
                 </div>
@@ -84,14 +77,14 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
       {!showingSummary ? (
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <PenLine className="h-4 w-4 text-corruption-primary" />
-            <h4 className="font-semibold">What will you do?</h4>
+            <PenLine className="h-4 w-4" />
+            <h4 className="font-medium font-serif">What will you do?</h4>
           </div>
           
           {choices.map((choice) => (
             <Card 
               key={choice.id}
-              className={`corruption-card cursor-pointer hover:bg-muted/30 from-${getChoiceGradient(choice.outcomes.integrity || 0)}`}
+              className="corruption-card cursor-pointer hover:bg-muted/30 rounded-none border"
               onClick={() => onChoice(choice.id)}
             >
               <CardContent className="p-4">
@@ -110,14 +103,14 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
         </div>
       ) : (
         <div className="mt-6 space-y-4">
-          <Card className="bg-muted/20">
+          <Card className="rounded-none border">
             <CardContent className="p-4">
-              <h4 className="font-semibold mb-2">Choice Made</h4>
+              <h4 className="font-semibold mb-2 font-serif">Choice Made</h4>
               <p className="text-muted-foreground">
                 You've made your decision. The consequences of your actions will follow you.
               </p>
               
-              <div className="mt-4 p-3 bg-primary/5 rounded-md text-sm">
+              <div className="mt-4 p-3 border border-black text-sm">
                 <p className="font-medium mb-1">Reflection:</p>
                 <p>Consider how your choice might affect different stakeholders. What potential long-term consequences might arise from this decision?</p>
               </div>
@@ -125,7 +118,7 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
           </Card>
           
           <div className="flex justify-end">
-            <Button onClick={onContinue} className="gap-2">
+            <Button variant="minimal" onClick={onContinue} className="gap-2">
               <span>Continue</span>
               <ArrowRight className="h-4 w-4" />
             </Button>

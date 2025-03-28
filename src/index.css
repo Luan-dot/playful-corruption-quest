@@ -5,74 +5,74 @@
 
 @layer base {
   :root {
-    --background: 250 33% 98%;
-    --foreground: 240 10% 3.9%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 5%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 5%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 0 0% 5%;
 
-    --primary: 263 70% 50.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 5%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 5%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 5%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 5%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-foreground: 0 0% 45%;
+    --sidebar-primary: 0 0% 5%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 5%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 5%;
   }
 
   .dark {
-    --background: 230 20% 15%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 263 70% 50.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 63%;
 
-    --accent: 240 3.7% 15.9%;
+    --accent: 0 0% 12%;
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 83%;
   }
 }
 
@@ -84,25 +84,27 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif tracking-tight;
+  }
 }
 
 .paper-bg {
-  background-color: #f8f8f8;
-  background-image: 
-    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px),
-    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-color: #fbfbfb;
+  background-image: none;
 }
 
 .corruption-card {
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  border-radius: 0;
 }
 
 .corruption-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1);
 }
 
 .corruption-card::after {
@@ -110,7 +112,44 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 5px;
-  background: linear-gradient(90deg, var(--tw-gradient-from), var(--tw-gradient-to));
+  width: 3px;
+  height: 100%;
+  background: #000;
+}
+
+.minimal-card {
+  @apply border-0 shadow-none bg-transparent;
+}
+
+.minimal-button {
+  @apply rounded-none border border-black bg-white text-black hover:bg-black hover:text-white transition-colors;
+}
+
+.minimal-badge {
+  @apply rounded-none bg-background border border-foreground text-foreground text-xs px-2 py-0.5;
+}
+
+.minimal-progress {
+  @apply h-1.5 rounded-none bg-secondary;
+}
+
+.minimal-progress-indicator {
+  @apply rounded-none bg-foreground;
+}
+
+.dark-progress {
+  @apply bg-white/10;
+}
+
+.dark-progress-indicator {
+  @apply bg-white/80;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }

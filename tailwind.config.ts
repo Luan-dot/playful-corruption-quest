@@ -19,6 +19,11 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				serif: ['Georgia', 'serif'],
+				mono: ['Consolas', 'monospace'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -64,11 +69,11 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				corruption: {
-					dark: '#1A1F2C',
-					primary: '#8B5CF6',
-					secondary: '#7E69AB',
-					light: '#E5DEFF',
-					red: '#EA384C'
+					dark: '#1A1A1A',
+					primary: '#000000',
+					secondary: '#444444',
+					light: '#F5F5F5',
+					red: '#000000'
 				},
 			},
 			borderRadius: {
