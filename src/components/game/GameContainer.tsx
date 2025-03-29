@@ -6,6 +6,8 @@ import MainContent from './MainContent';
 import SpecialActivities from './SpecialActivities';
 import { useGameState } from '@/hooks/useGameState';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { AlertTriangle } from 'lucide-react';
 
 interface GameContainerProps {
   difficulty?: string;
@@ -35,7 +37,7 @@ const GameContainer: React.FC<GameContainerProps> = ({
     handleActivityComplete
   } = useGameState(difficulty);
 
-  // Effect to notify player about ripple effects
+  // Effect to notify player about ripple effects with improved visual feedback
   useEffect(() => {
     if (hasRippleEffects) {
       toast({
@@ -61,6 +63,17 @@ const GameContainer: React.FC<GameContainerProps> = ({
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl animate-fade-in">
       <GameHeader playerStyle={playerStats.playerStyle} />
+      
+      {/* Visual indicator for ripple effects */}
+      {hasRippleEffects && (
+        <div className="mb-6 p-3 border border-destructive bg-destructive/10 animate-pulse flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-destructive" />
+          <div>
+            <h3 className="font-medium text-destructive">Ripple Effects Active</h3>
+            <p className="text-sm">Your past decisions are influencing the current scenario.</p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Stats panel */}

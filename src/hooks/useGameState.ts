@@ -53,6 +53,7 @@ export const useGameState = (difficulty = 'intermediate') => {
   const [triggeredHeadlines, setTriggeredHeadlines] = useState<typeof consequences>([]);
   const [branching, setBranching] = useState(false);
   const [hasRippleEffects, setHasRippleEffects] = useState(false);
+  const [transitionState, setTransitionState] = useState<'idle' | 'transitioning'>('idle');
   
   // Determine player style based on choices and stats
   useEffect(() => {
@@ -71,6 +72,7 @@ export const useGameState = (difficulty = 'intermediate') => {
           playerStyle: style
         }));
         
+        // Enhanced toast for player style changes
         toast({
           title: "Leadership Style Evolved",
           description: `Your decisions have shaped your character. You are now identified as: ${style}`,
@@ -91,9 +93,10 @@ export const useGameState = (difficulty = 'intermediate') => {
       if (eligibleBranches.length > 0 && !branching) {
         setBranching(true);
         
+        // Enhanced toast for branching narratives
         toast({
           title: "Narrative Path Unlocked",
-          description: `Your leadership style has unlocked a unique path in your journey.`,
+          description: `Your ${playerStats.playerStyle} leadership style has revealed a unique storyline. New options will become available.`,
           variant: "default",
         });
       }
@@ -103,6 +106,7 @@ export const useGameState = (difficulty = 'intermediate') => {
   useEffect(() => {
     // After completing a scenario, randomly show a special activity
     if (showingSummary && playerStats.completedScenarios > 0 && playerStats.completedScenarios < scenarios.length) {
+      // Create more structured special activity selection based on player progress
       const shouldShowActivity = Math.random() > 0.3; // 70% chance to show an activity
       setShowSpecialActivity(shouldShowActivity);
     } else {
@@ -138,12 +142,18 @@ export const useGameState = (difficulty = 'intermediate') => {
         return newStats;
       });
       
-      // Show toast about ripple effects
-      toast({
-        title: "Past Decisions Return",
-        description: "Your earlier choices have created unexpected consequences.",
-        variant: "destructive",
-      });
+      // Enhanced toast for ripple effects with more specific information
+      const impactDescription = relevantConsequences.length > 1 
+        ? `${relevantConsequences.length} of your earlier choices have created consequences.`
+        : "An earlier choice has returned to impact your current situation.";
+        
+      setTimeout(() => {
+        toast({
+          title: "Past Decisions Return",
+          description: impactDescription,
+          variant: "destructive",
+        });
+      }, 500); // Slight delay for better pacing
     } else {
       setTriggeredHeadlines([]);
       setHasRippleEffects(false);
@@ -177,14 +187,16 @@ export const useGameState = (difficulty = 'intermediate') => {
     
     setLastChoiceId(choiceId);
 
-    // Show outcome toast
-    toast({
-      title: "Decision Made",
-      description: choice.outcomeText,
-      variant: choice.outcomes.integrity < 0 ? "destructive" : "default",
-    });
+    // Improved feedback for choices with better timing
+    setTimeout(() => {
+      toast({
+        title: "Decision Made",
+        description: choice.outcomeText,
+        variant: choice.outcomes.integrity < 0 ? "destructive" : "default",
+      });
+    }, 300);
 
-    // Show summary after choice
+    // Show summary after choice with a slight animation delay
     setShowingSummary(true);
     
     // Check for immediate feedback on particularly significant choices
@@ -197,11 +209,14 @@ export const useGameState = (difficulty = 'intermediate') => {
           description: "This decision will have far-reaching consequences on your journey.",
           variant: "default",
         });
-      }, 1500);
+      }, 1800); // Longer delay for second toast
     }
   };
 
   const moveToNextScenario = () => {
+    // Add transition state for smoother movement between scenarios
+    setTransitionState('transitioning');
+    
     // After showing the summary, determine next state
     if (showSpecialActivity) {
       // Choose a special activity based on the current scenario and player stats
@@ -225,7 +240,7 @@ export const useGameState = (difficulty = 'intermediate') => {
       } else if (playerStats.completedScenarios === 4) {
         nextActivity = 'vulnerability-assessment';
       } else {
-        // Choose based on player style
+        // Choose based on player style with improved selection logic
         if (playerStats.playerStyle === 'Pragmatic Reformer') {
           nextActivity = Math.random() > 0.5 ? 'ecosystem' : 'reflection';
         } else if (playerStats.playerStyle === 'Power Broker') {
@@ -239,39 +254,69 @@ export const useGameState = (difficulty = 'intermediate') => {
         }
       }
       
-      setGameState(nextActivity);
-      setShowSpecialActivity(false);
+      // Add delay for smoother transition
+      setTimeout(() => {
+        setGameState(nextActivity);
+        setShowSpecialActivity(false);
+        setTransitionState('idle');
+      }, 400);
     } else if (currentScenario < scenarios.length - 1) {
-      // Move to next main scenario
-      setCurrentScenario(prev => prev + 1);
-      setShowingSummary(false);
-      setActiveTab("scenario");
-      setShowHint(false);
-      setGameState('main-scenario');
-      setTriggeredHeadlines([]);
-      setHasRippleEffects(false);
+      // Move to next main scenario with a delay for better pacing
+      setTimeout(() => {
+        setCurrentScenario(prev => prev + 1);
+        setShowingSummary(false);
+        setActiveTab("scenario");
+        setShowHint(false);
+        setGameState('main-scenario');
+        setTriggeredHeadlines([]);
+        setHasRippleEffects(false);
+        setTransitionState('idle');
+        
+        // Toast to indicate progression
+        toast({
+          title: "New Scenario",
+          description: `Scenario ${currentScenario + 2} of ${scenarios.length}`,
+          variant: "default",
+        });
+      }, 400);
     } else {
       // Game completed
-      setGameState('complete');
+      setTimeout(() => {
+        setGameState('complete');
+        setTransitionState('idle');
+      }, 400);
     }
   };
   
   const handleActivityComplete = () => {
     // After completing a special activity, continue to the next scenario
-    if (currentScenario < scenarios.length - 1) {
-      setCurrentScenario(prev => prev + 1);
-      setShowingSummary(false);
-      setActiveTab("scenario");
-      setShowHint(false);
-      setGameState('main-scenario');
-      setHasRippleEffects(false);
-    } else {
-      setGameState('complete');
-    }
+    setTransitionState('transitioning');
+    
+    setTimeout(() => {
+      if (currentScenario < scenarios.length - 1) {
+        setCurrentScenario(prev => prev + 1);
+        setShowingSummary(false);
+        setActiveTab("scenario");
+        setShowHint(false);
+        setGameState('main-scenario');
+        setHasRippleEffects(false);
+      } else {
+        setGameState('complete');
+      }
+      setTransitionState('idle');
+    }, 400);
   };
   
   const toggleHint = () => {
     setShowHint(!showHint);
+    
+    if (!showHint) {
+      toast({
+        title: "Hint Revealed",
+        description: "Remember that seeking help is not a sign of weakness, but of wisdom.",
+        variant: "default",
+      });
+    }
   };
 
   return {
@@ -287,6 +332,7 @@ export const useGameState = (difficulty = 'intermediate') => {
     triggeredHeadlines,
     branching,
     hasRippleEffects,
+    transitionState,
     handleChoice,
     moveToNextScenario,
     handleActivityComplete
