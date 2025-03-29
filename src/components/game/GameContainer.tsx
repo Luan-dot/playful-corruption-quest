@@ -25,6 +25,8 @@ import ResultsScreen from './ResultsScreen';
 import EducationalSidebar from './EducationalSidebar';
 import { scenarios } from '@/data/scenarios';
 import { newsItems } from '@/data/news';
+import { consequences } from '@/data/consequences';
+import { determinePlayerStyle, storyBranches } from '@/data/player-profiles';
 import { useToast } from '@/hooks/use-toast';
 import {
   Tooltip,
@@ -39,6 +41,9 @@ import BranchingNarrative from './BranchingNarrative';
 import InvestigationMiniGame from './InvestigationMiniGame';
 import CorruptionEcosystem from './CorruptionEcosystem';
 import VulnerabilityAssessment from './VulnerabilityAssessment';
+import NewsHeadlines from './NewsHeadlines';
+import CorruptionNetwork from './CorruptionNetwork';
+import { CharacterPortrait, LocationIllustration } from './VisualElements';
 
 interface GameContainerProps {
   difficulty?: string;
@@ -57,6 +62,8 @@ type PlayerStats = {
     text: string;
     outcome: string;
   }>;
+  playerStyle: string;
+  triggeredConsequences: number[];
 }
 
 type GameState = 
@@ -76,7 +83,9 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
     power: 30,
     reputation: 70,
     completedScenarios: 0,
-    choices: []
+    choices: [],
+    playerStyle: 'Undetermined',
+    triggeredConsequences: []
   });
   const [currentScenario, setCurrentScenario] = useState(0);
   const [showingSummary, setShowingSummary] = useState(false);
@@ -85,6 +94,43 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
   const [showHint, setShowHint] = useState(false);
   const [lastChoiceId, setLastChoiceId] = useState<number | null>(null);
   const [showSpecialActivity, setShowSpecialActivity] = useState(false);
+  const [triggeredHeadlines, setTriggeredHeadlines] = useState<typeof consequences>([]);
+  const [branching, setBranching] = useState(false);
+  
+  // Track whether a player has triggered any ripple effects
+  const [hasRippleEffects, setHasRippleEffects] = useState(false);
+  
+  // Determine player style based on choices and stats
+  useEffect(() => {
+    if (playerStats.choices.length > 0) {
+      const style = determinePlayerStyle(
+        playerStats.integrity,
+        playerStats.money,
+        playerStats.power,
+        playerStats.reputation,
+        playerStats.choices.map(c => ({ scenarioId: c.scenarioId, choiceId: c.choiceId }))
+      );
+      
+      setPlayerStats(prev => ({
+        ...prev,
+        playerStyle: style
+      }));
+    }
+  }, [playerStats.choices]);
+  
+  // Check for story branches that should be activated
+  useEffect(() => {
+    if (playerStats.playerStyle !== 'Undetermined' && playerStats.completedScenarios >= 2) {
+      const eligibleBranches = storyBranches.filter(branch => 
+        branch.requiredStyle === playerStats.playerStyle && 
+        playerStats.integrity >= branch.requiredIntegrity
+      );
+      
+      if (eligibleBranches.length > 0) {
+        setBranching(true);
+      }
+    }
+  }, [playerStats.playerStyle, playerStats.integrity, playerStats.completedScenarios]);
   
   useEffect(() => {
     // After completing a scenario, randomly show a special activity
@@ -95,6 +141,45 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
       setShowSpecialActivity(false);
     }
   }, [showingSummary, playerStats.completedScenarios]);
+
+  // Check for consequences that should be triggered
+  useEffect(() => {
+    if (!showingSummary || currentScenario <= 0) return;
+    
+    // Find consequences that should trigger on this scenario
+    const relevantConsequences = consequences.filter(c => 
+      c.triggerScenarioId === scenarios[currentScenario].id && 
+      !playerStats.triggeredConsequences.includes(c.id) &&
+      playerStats.choices.some(choice => choice.scenarioId === c.scenarioId && choice.choiceId === c.choiceId)
+    );
+    
+    if (relevantConsequences.length > 0) {
+      setTriggeredHeadlines(relevantConsequences);
+      setHasRippleEffects(true);
+      
+      // Apply consequence effects
+      setPlayerStats(prev => {
+        const newStats = { ...prev };
+        relevantConsequences.forEach(consequence => {
+          if (consequence.impact.integrity) newStats.integrity = Math.max(0, Math.min(100, newStats.integrity + consequence.impact.integrity));
+          if (consequence.impact.money) newStats.money = Math.max(0, Math.min(100, newStats.money + consequence.impact.money));
+          if (consequence.impact.power) newStats.power = Math.max(0, Math.min(100, newStats.power + consequence.impact.power));
+          if (consequence.impact.reputation) newStats.reputation = Math.max(0, Math.min(100, newStats.reputation + consequence.impact.reputation));
+          newStats.triggeredConsequences.push(consequence.id);
+        });
+        return newStats;
+      });
+      
+      // Show toast about ripple effects
+      toast({
+        title: "Past Decisions Return",
+        description: "Your earlier choices have created unexpected consequences.",
+        variant: "default",
+      });
+    } else {
+      setTriggeredHeadlines([]);
+    }
+  }, [currentScenario, showingSummary, playerStats.choices, playerStats.triggeredConsequences, toast]);
 
   const handleChoice = (choiceId: number) => {
     const scenario = scenarios[currentScenario];
@@ -173,6 +258,7 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
       setActiveTab("scenario");
       setShowHint(false);
       setGameState('main-scenario');
+      setTriggeredHeadlines([]);
     } else {
       // Game completed
       setGameState('complete');
@@ -217,11 +303,18 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
     return newsItems.find(item => item.relatedScenarioId === scenarios[currentScenario].id);
   };
 
+  // Determine character portrait emotion based on player stats
+  const getCharacterEmotion = () => {
+    if (playerStats.integrity < 40 || playerStats.reputation < 40) return 'negative';
+    if (playerStats.integrity > 70 || playerStats.reputation > 70) return 'positive';
+    return 'neutral';
+  };
+
   // Render special activities
   const renderSpecialActivity = () => {
     switch(gameState) {
       case 'reflection':
-        // Fix: Add a null check for currentScenario and make sure it's valid before accessing
+        // Check if currentScenario is valid before accessing
         if (currentScenario <= 0 || !scenarios[currentScenario - 1]) {
           return (
             <div className="container mx-auto px-4 py-6 max-w-3xl">
@@ -313,6 +406,11 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
         <p className="text-lg text-muted-foreground font-serif">
           A game about leadership, ethics, and human nature
         </p>
+        {playerStats.playerStyle !== 'Undetermined' && (
+          <Badge variant="outline" className="minimal-badge mt-2">
+            Playing as: {playerStats.playerStyle}
+          </Badge>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -392,12 +490,41 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
               </Button>
             )}
 
+            {/* Visual character representation */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium mb-2">Character Portrait</h3>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-1">
+                  <CharacterPortrait 
+                    emotion={getCharacterEmotion()} 
+                    role={scenarios[currentScenario].setting.position} 
+                  />
+                </div>
+                <div className="col-span-2">
+                  <LocationIllustration 
+                    setting={scenarios[currentScenario].setting.location} 
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Character Development */}
             <CharacterDevelopment 
               integrity={playerStats.integrity}
               reputation={playerStats.reputation}
               completedScenarios={playerStats.completedScenarios}
             />
+
+            {/* Corruption network visualization */}
+            {branching && (
+              <div className="mt-6">
+                <CorruptionNetwork 
+                  stakeholders={scenarios[currentScenario].stakeholders}
+                  title={`Impact Network: ${scenarios[currentScenario].title}`}
+                  isCorrupt={playerStats.integrity < 50}
+                />
+              </div>
+            )}
 
             {/* Educational Sidebar */}
             <div className="mt-6">
@@ -409,6 +536,9 @@ const GameContainer: React.FC<GameContainerProps> = ({ difficulty = 'intermediat
         {/* Main game content */}
         <div className="md:col-span-2">
           <Card className="shadow-sm overflow-hidden rounded-none border">
+            {/* Display ripple effect headlines if there are any */}
+            {triggeredHeadlines.length > 0 && <NewsHeadlines consequences={triggeredHeadlines} />}
+            
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <div className="bg-muted p-1 flex justify-between items-center border-b">
                 <TabsList className="bg-transparent">

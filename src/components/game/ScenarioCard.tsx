@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Scenario } from '@/data/scenarios';
 import { PenLine, ArrowRight, Users, Clock, Building, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { CharacterPortrait, LocationIllustration } from './VisualElements';
 
 interface ScenarioCardProps {
   scenario: Scenario;
@@ -27,6 +28,13 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
     if (integrityImpact > 0) return <CheckCircle2 className="h-4 w-4" />;
     if (integrityImpact > -10) return <AlertTriangle className="h-4 w-4" />;
     return <XCircle className="h-4 w-4" />;
+  };
+
+  // Function to determine the emotion for character portraits
+  const getEmotion = (integrityImpact: number) => {
+    if (integrityImpact > 0) return 'positive';
+    if (integrityImpact < -10) return 'negative';
+    return 'neutral';
   };
 
   return (
@@ -62,15 +70,9 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
               ))}
             </div>
           </div>
-          {image && (
-            <div className="hidden md:block">
-              <div className="w-full h-36 rounded-none overflow-hidden border bg-muted">
-                <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                  [Scenario Image]
-                </div>
-              </div>
-            </div>
-          )}
+          <div className="hidden md:block">
+            <LocationIllustration setting={setting.location} />
+          </div>
         </div>
       </div>
       
@@ -92,9 +94,17 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
                   <div className="mt-1">
                     {getEthicalIcon(choice.outcomes.integrity || 0)}
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p>{choice.text}</p>
                     <p className="text-xs text-muted-foreground mt-2 italic">{choice.reasoning}</p>
+                  </div>
+                  <div className="hidden md:block w-10">
+                    <div className="w-10 h-10">
+                      <CharacterPortrait 
+                        emotion={getEmotion(choice.outcomes.integrity || 0)} 
+                        role=""
+                      />
+                    </div>
                   </div>
                 </div>
               </CardContent>
