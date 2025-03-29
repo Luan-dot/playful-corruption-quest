@@ -1,10 +1,19 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Scenario } from '@/data/scenarios';
-import { PenLine, ArrowRight, Users, Clock, Building, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Scenario } from "@/data/scenarios";
+import {
+  PenLine,
+  ArrowRight,
+  Users,
+  Clock,
+  Building,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { consequenceManager } from "@/lib/consequences-system";
 
 interface ScenarioCardProps {
   scenario: Scenario;
@@ -17,9 +26,59 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
   scenario,
   onChoice,
   showingSummary,
-  onContinue
+  onContinue,
 }) => {
-  const { title, description, setting, choices, image } = scenario;
+  const { title, setting, choices, image } = scenario;
+
+  // Get any modifications for this scenario from the consequence system
+  const scenarioModifications = consequenceManager.getScenarioModifications(
+    scenario.id
+  );
+
+  // Apply modifications to the scenario description
+  let modifiedDescription = scenario.description;
+  let modifiedChoices = [...scenario.choices];
+
+  // Apply each modification
+  scenarioModifications.forEach((modification) => {
+    if (modification.effect.scenarioModification) {
+      const mod = modification.effect.scenarioModification;
+
+      // Update description if provided
+      if (mod.modifiedText) {
+        modifiedDescription = mod.modifiedText;
+      }
+
+      // Update choice texts and outcomes if provided
+      if (mod.modifiedChoices) {
+        mod.modifiedChoices.forEach((choiceMod) => {
+          const choiceIndex = modifiedChoices.findIndex(
+            (c) => c.id === choiceMod.choiceId
+          );
+          if (choiceIndex >= 0) {
+            modifiedChoices[choiceIndex] = {
+              ...modifiedChoices[choiceIndex],
+              text: choiceMod.newText || modifiedChoices[choiceIndex].text,
+              outcomeText:
+                choiceMod.newOutcome ||
+                modifiedChoices[choiceIndex].outcomeText,
+              outcomes: choiceMod.newEffects
+                ? {
+                    ...modifiedChoices[choiceIndex].outcomes,
+                    ...choiceMod.newEffects,
+                  }
+                : modifiedChoices[choiceIndex].outcomes,
+            };
+          }
+        });
+      }
+
+      // Add new choice if provided
+      if (mod.additionalChoice) {
+        modifiedChoices.push(mod.additionalChoice);
+      }
+    }
+  });
 
   // Function to determine the icon for ethical rating
   const getEthicalIcon = (integrityImpact: number) => {
@@ -49,11 +108,11 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="md:col-span-2">
-            <p className="text-muted-foreground mb-4">{description}</p>
+            <p className="text-muted-foreground mb-4">{modifiedDescription}</p>
             <div className="italic text-sm border-l-2 border-black pl-3 py-1">
               "{setting.context}"
             </div>
-            
+
             <div className="mt-4 flex flex-wrap gap-2">
               {scenario.stakeholders.map((stakeholder, index) => (
                 <Badge key={index} variant="outline" className="minimal-badge">
@@ -73,16 +132,16 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
           )}
         </div>
       </div>
-      
+
       {!showingSummary ? (
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <PenLine className="h-4 w-4" />
             <h4 className="font-medium font-serif">What will you do?</h4>
           </div>
-          
-          {choices.map((choice) => (
-            <Card 
+
+          {modifiedChoices.map((choice) => (
+            <Card
               key={choice.id}
               className="corruption-card cursor-pointer hover:bg-muted/30 rounded-none border"
               onClick={() => onChoice(choice.id)}
@@ -94,7 +153,9 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
                   </div>
                   <div>
                     <p>{choice.text}</p>
-                    <p className="text-xs text-muted-foreground mt-2 italic">{choice.reasoning}</p>
+                    <p className="text-xs text-muted-foreground mt-2 italic">
+                      {choice.reasoning}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -107,16 +168,21 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
             <CardContent className="p-4">
               <h4 className="font-semibold mb-2 font-serif">Choice Made</h4>
               <p className="text-muted-foreground">
-                You've made your decision. The consequences of your actions will follow you.
+                You've made your decision. The consequences of your actions will
+                follow you.
               </p>
-              
+
               <div className="mt-4 p-3 border border-black text-sm">
                 <p className="font-medium mb-1">Reflection:</p>
-                <p>Consider how your choice might affect different stakeholders. What potential long-term consequences might arise from this decision?</p>
+                <p>
+                  Consider how your choice might affect different stakeholders.
+                  What potential long-term consequences might arise from this
+                  decision?
+                </p>
               </div>
             </CardContent>
           </Card>
-          
+
           <div className="flex justify-end">
             <Button variant="minimal" onClick={onContinue} className="gap-2">
               <span>Continue</span>
