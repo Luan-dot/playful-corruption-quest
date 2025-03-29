@@ -65,12 +65,20 @@ export const useGameState = (difficulty = 'intermediate') => {
         playerStats.choices.map(c => ({ scenarioId: c.scenarioId, choiceId: c.choiceId }))
       );
       
-      setPlayerStats(prev => ({
-        ...prev,
-        playerStyle: style
-      }));
+      if (style !== playerStats.playerStyle) {
+        setPlayerStats(prev => ({
+          ...prev,
+          playerStyle: style
+        }));
+        
+        toast({
+          title: "Leadership Style Evolved",
+          description: `Your decisions have shaped your character. You are now identified as: ${style}`,
+          variant: "default",
+        });
+      }
     }
-  }, [playerStats.choices]);
+  }, [playerStats.choices, playerStats.integrity, playerStats.money, playerStats.power, playerStats.reputation, toast]);
   
   // Check for story branches that should be activated
   useEffect(() => {
@@ -80,11 +88,17 @@ export const useGameState = (difficulty = 'intermediate') => {
         playerStats.integrity >= branch.requiredIntegrity
       );
       
-      if (eligibleBranches.length > 0) {
+      if (eligibleBranches.length > 0 && !branching) {
         setBranching(true);
+        
+        toast({
+          title: "Narrative Path Unlocked",
+          description: `Your leadership style has unlocked a unique path in your journey.`,
+          variant: "default",
+        });
       }
     }
-  }, [playerStats.playerStyle, playerStats.integrity, playerStats.completedScenarios]);
+  }, [playerStats.playerStyle, playerStats.integrity, playerStats.completedScenarios, branching, toast]);
   
   useEffect(() => {
     // After completing a scenario, randomly show a special activity
@@ -128,10 +142,11 @@ export const useGameState = (difficulty = 'intermediate') => {
       toast({
         title: "Past Decisions Return",
         description: "Your earlier choices have created unexpected consequences.",
-        variant: "default",
+        variant: "destructive",
       });
     } else {
       setTriggeredHeadlines([]);
+      setHasRippleEffects(false);
     }
   }, [currentScenario, showingSummary, playerStats.choices, playerStats.triggeredConsequences, toast]);
 
@@ -171,6 +186,19 @@ export const useGameState = (difficulty = 'intermediate') => {
 
     // Show summary after choice
     setShowingSummary(true);
+    
+    // Check for immediate feedback on particularly significant choices
+    if (Math.abs(choice.outcomes.integrity || 0) >= 15 || 
+        Math.abs(choice.outcomes.reputation || 0) >= 15) {
+      
+      setTimeout(() => {
+        toast({
+          title: "Significant Impact",
+          description: "This decision will have far-reaching consequences on your journey.",
+          variant: "default",
+        });
+      }, 1500);
+    }
   };
 
   const moveToNextScenario = () => {
@@ -185,7 +213,7 @@ export const useGameState = (difficulty = 'intermediate') => {
         'vulnerability-assessment'
       ];
       
-      // Choose an activity based on current scenario
+      // Choose an activity based on current scenario and player style
       let nextActivity: GameState;
       
       if (playerStats.completedScenarios === 1) {
@@ -193,13 +221,22 @@ export const useGameState = (difficulty = 'intermediate') => {
       } else if (playerStats.completedScenarios === 2) {
         nextActivity = 'ecosystem';
       } else if (playerStats.completedScenarios === 3) {
-        nextActivity = 'branching-narrative';
+        nextActivity = playerStats.integrity < 50 ? 'investigation' : 'branching-narrative';
       } else if (playerStats.completedScenarios === 4) {
-        nextActivity = 'investigation';
+        nextActivity = 'vulnerability-assessment';
       } else {
-        // Random selection
-        const randomIndex = Math.floor(Math.random() * specialActivities.length);
-        nextActivity = specialActivities[randomIndex];
+        // Choose based on player style
+        if (playerStats.playerStyle === 'Pragmatic Reformer') {
+          nextActivity = Math.random() > 0.5 ? 'ecosystem' : 'reflection';
+        } else if (playerStats.playerStyle === 'Power Broker') {
+          nextActivity = Math.random() > 0.5 ? 'branching-narrative' : 'investigation';
+        } else if (playerStats.playerStyle === 'Ethical Purist') {
+          nextActivity = Math.random() > 0.5 ? 'reflection' : 'vulnerability-assessment';
+        } else {
+          // Random selection
+          const randomIndex = Math.floor(Math.random() * specialActivities.length);
+          nextActivity = specialActivities[randomIndex];
+        }
       }
       
       setGameState(nextActivity);
@@ -212,6 +249,7 @@ export const useGameState = (difficulty = 'intermediate') => {
       setShowHint(false);
       setGameState('main-scenario');
       setTriggeredHeadlines([]);
+      setHasRippleEffects(false);
     } else {
       // Game completed
       setGameState('complete');
@@ -226,6 +264,7 @@ export const useGameState = (difficulty = 'intermediate') => {
       setActiveTab("scenario");
       setShowHint(false);
       setGameState('main-scenario');
+      setHasRippleEffects(false);
     } else {
       setGameState('complete');
     }

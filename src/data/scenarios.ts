@@ -95,6 +95,30 @@ export const scenarios: Scenario[] = [
           power: 10,
           reputation: -10
         }
+      },
+      {
+        id: 4,
+        text: "Decline the meeting and document the contact attempt in the official procurement file.",
+        reasoning: "This maintains complete transparency and avoids any appearance of favoritism, though it might strain your personal relationship.",
+        outcomeText: "Your friend was upset by your formality, but the procurement process remained untainted. Your supervisor commended your professionalism.",
+        outcomes: {
+          integrity: 15,
+          money: -5,
+          power: -10,
+          reputation: 10
+        }
+      },
+      {
+        id: 5,
+        text: "Meet publicly with all bidders to address questions and clarify requirements.",
+        reasoning: "This maintains a level playing field while still allowing companies to present their cases and ask questions.",
+        outcomeText: "The transparent approach was appreciated by all bidders. The city received improved proposals after clarifications, saving money while meeting quality requirements.",
+        outcomes: {
+          integrity: 12,
+          money: 8,
+          power: 5,
+          reputation: 8
+        }
       }
     ]
   },
@@ -160,6 +184,30 @@ export const scenarios: Scenario[] = [
           money: 15,
           power: -5,
           reputation: -15
+        }
+      },
+      {
+        id: 4,
+        text: "Return the envelope, report the attempted bribe, and request another inspector take over due to the conflict.",
+        reasoning: "This maintains maximum integrity and ensures an unbiased inspection, though it may create professional tensions.",
+        outcomeText: "Your report led to an investigation. Other inspectors reported similar experiences with this developer. Your action protected public safety and your professional reputation.",
+        outcomes: {
+          integrity: 20,
+          money: -10,
+          power: -5,
+          reputation: 15
+        }
+      },
+      {
+        id: 5,
+        text: "Expedite the inspection process legitimately by prioritizing this project, without compromising standards.",
+        reasoning: "This responds to the genuine need for efficiency without compromising safety or ethics.",
+        outcomeText: "By working overtime and shuffling your schedule, you completed a thorough inspection quickly. The developer appreciated your help, and residents moved in on time to safe apartments.",
+        outcomes: {
+          integrity: 8,
+          money: 0,
+          power: 5,
+          reputation: 10
         }
       }
     ]
@@ -227,6 +275,30 @@ export const scenarios: Scenario[] = [
           power: 10,
           reputation: -15
         }
+      },
+      {
+        id: 4,
+        text: "Suggest the businessman donate to the school's scholarship fund instead, which helps deserving students regardless of background.",
+        reasoning: "This redirects the good intentions to a more ethical outcome, potentially benefiting multiple students based on merit.",
+        outcomeText: "After initial resistance, the businessman agreed to fund scholarships. The academic standards remained intact, and three deserving students received financial aid.",
+        outcomes: {
+          integrity: 20,
+          money: 10,
+          power: 5,
+          reputation: 15
+        }
+      },
+      {
+        id: 5,
+        text: "Consult with the school board to create a transparent policy for handling donations and admissions.",
+        reasoning: "This addresses the systemic issue rather than just the individual case, creating clear guidelines for the future.",
+        outcomeText: "The board established clear separation between donations and admissions decisions. This strengthened institutional integrity and provided a framework for handling future situations.",
+        outcomes: {
+          integrity: 25,
+          money: 0,
+          power: 10,
+          reputation: 20
+        }
       }
     ]
   },
@@ -293,6 +365,30 @@ export const scenarios: Scenario[] = [
           power: 5,
           reputation: -10
         }
+      },
+      {
+        id: 4,
+        text: "Work with the ethics committee to implement a blind bidding process for all future contracts.",
+        reasoning: "This addresses the systemic vulnerability and creates more transparent processes that reduce corruption opportunities.",
+        outcomeText: "The new blind bidding system significantly reduced corruption opportunities. The hospital saved money and improved quality through more competitive and honest bidding.",
+        outcomes: {
+          integrity: 25,
+          money: 15,
+          power: 10,
+          reputation: 20
+        }
+      },
+      {
+        id: 5,
+        text: "Record the conversation secretly to gather evidence before reporting to authorities.",
+        reasoning: "This ensures concrete evidence of corruption but involves some deception and potential legal complications.",
+        outcomeText: "Your recording provided conclusive evidence of attempted bribery. The company faced legal consequences, and your hospital was protected from unethical suppliers.",
+        outcomes: {
+          integrity: 15,
+          money: 0,
+          power: -5,
+          reputation: 10
+        }
       }
     ]
   },
@@ -358,6 +454,30 @@ export const scenarios: Scenario[] = [
           money: 20,
           power: 10,
           reputation: -20
+        }
+      },
+      {
+        id: 4,
+        text: "Anonymously report the violation to regulatory authorities while continuing to work internally for a solution.",
+        reasoning: "This ensures environmental protection while attempting to minimize direct professional consequences, though it creates ethical complications.",
+        outcomeText: "The anonymous report triggered an investigation, forcing the company to address the issue properly. Your anonymity was maintained, though some suspected your involvement.",
+        outcomes: {
+          integrity: 10,
+          money: -10,
+          power: -15,
+          reputation: 5
+        }
+      },
+      {
+        id: 5,
+        text: "Propose an innovative technical solution that could address the compliance issue without significant delay or cost.",
+        reasoning: "This seeks a win-win solution that maintains integrity while addressing legitimate economic concerns.",
+        outcomeText: "Your creative solution was implemented successfully, bringing compliance without major delays. The approach was praised and later adopted as standard practice in similar situations.",
+        outcomes: {
+          integrity: 15,
+          money: 10,
+          power: 15,
+          reputation: 20
         }
       }
     ]

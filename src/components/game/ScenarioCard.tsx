@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Scenario } from '@/data/scenarios';
-import { PenLine, ArrowRight, Users, Clock, Building, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
+import { PenLine, ArrowRight, Users, Clock, Building } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CharacterPortrait, LocationIllustration } from './VisualElements';
 
@@ -21,21 +21,6 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
   onContinue
 }) => {
   const { title, description, setting, choices, image } = scenario;
-
-  // Function to determine the icon for ethical rating
-  const getEthicalIcon = (integrityImpact: number) => {
-    if (integrityImpact > 10) return <CheckCircle2 className="h-4 w-4" />;
-    if (integrityImpact > 0) return <CheckCircle2 className="h-4 w-4" />;
-    if (integrityImpact > -10) return <AlertTriangle className="h-4 w-4" />;
-    return <XCircle className="h-4 w-4" />;
-  };
-
-  // Function to determine the emotion for character portraits
-  const getEmotion = (integrityImpact: number) => {
-    if (integrityImpact > 0) return 'positive';
-    if (integrityImpact < -10) return 'negative';
-    return 'neutral';
-  };
 
   return (
     <div className="p-6">
@@ -91,9 +76,6 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="mt-1">
-                    {getEthicalIcon(choice.outcomes.integrity || 0)}
-                  </div>
                   <div className="flex-1">
                     <p>{choice.text}</p>
                     <p className="text-xs text-muted-foreground mt-2 italic">{choice.reasoning}</p>
@@ -101,7 +83,7 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
                   <div className="hidden md:block w-10">
                     <div className="w-10 h-10">
                       <CharacterPortrait 
-                        emotion={getEmotion(choice.outcomes.integrity || 0)} 
+                        emotion="neutral" 
                         role=""
                       />
                     </div>

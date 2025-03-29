@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import GameHeader from './GameHeader';
 import StatsPanel from './StatsPanel';
 import MainContent from './MainContent';
 import SpecialActivities from './SpecialActivities';
 import { useGameState } from '@/hooks/useGameState';
+import { useToast } from '@/hooks/use-toast';
 
 interface GameContainerProps {
   difficulty?: string;
@@ -15,6 +16,7 @@ const GameContainer: React.FC<GameContainerProps> = ({
   difficulty = 'intermediate', 
   onOpenLibrary 
 }) => {
+  const { toast } = useToast();
   const {
     playerStats,
     currentScenario,
@@ -27,10 +29,22 @@ const GameContainer: React.FC<GameContainerProps> = ({
     lastChoiceId,
     triggeredHeadlines,
     branching,
+    hasRippleEffects,
     handleChoice,
     moveToNextScenario,
     handleActivityComplete
   } = useGameState(difficulty);
+
+  // Effect to notify player about ripple effects
+  useEffect(() => {
+    if (hasRippleEffects) {
+      toast({
+        title: "Ripple Effect Detected",
+        description: "Your past decisions have created unexpected consequences in the current scenario.",
+        variant: "destructive",
+      });
+    }
+  }, [hasRippleEffects, toast]);
 
   // If we're in a special activity state or game is complete, show that UI
   if (gameState !== 'main-scenario') {
